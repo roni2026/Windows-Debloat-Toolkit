@@ -1,0 +1,12 @@
+# Keyboard Troubleshooting Toolkit
+# No Python packages required - uses only the standard library + Windows APIs
+# Python 3.7+ recommended
+#
+# External (non-pip) dependency:
+#   smartmontools — required by modules/storage_checker.py for SMART disk health data
+#   Download: https://www.smartmontools.org/wiki/Download
+#   Install smartctl.exe and either:
+#     - add it to your system PATH, or
+#     - place it at <toolkit_folder>/smartmontools/bin/smartctl.exe
+#   Without it, storage_checker.py still runs (WMI disk enumeration works),
+#   but SMART health/attribute reporting will be skipped.
