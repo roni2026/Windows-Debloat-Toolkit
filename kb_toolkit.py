@@ -107,6 +107,7 @@ Usage:
   python kb_toolkit.py --systweaks     Open System Core tweaks directly
   python kb_toolkit.py --handheld      Open Handheld/Laptop Power tweaks directly
   python kb_toolkit.py --reclaim       Open Reclaim Space cleanup directly
+  python kb_toolkit.py --advtweaks     Open Advanced Tuning tweaks directly
   python kb_toolkit.py --admin      Restart as Administrator
 
 Author: Input Device Toolkit
@@ -176,6 +177,7 @@ Examples:
         parser.add_argument("--systweaks", action="store_true", help="Open System Core tweaks")
         parser.add_argument("--handheld", action="store_true", help="Open Handheld/Laptop Power tweaks")
         parser.add_argument("--reclaim", action="store_true", help="Open Reclaim Space cleanup")
+        parser.add_argument("--advtweaks", action="store_true", help="Open Advanced Tuning tweaks")
         parser.add_argument("--admin", action="store_true", help="Restart as Administrator")
         parser.add_argument("--version", action="store_true", help="Show version")
 
@@ -252,6 +254,8 @@ Examples:
             self._run_module("handheld_tweaks")
         elif args.reclaim:
             self._run_module("reclaim_space")
+        elif args.advtweaks:
+            self._run_module("advanced_tweaks")
         else:
             self._interactive_menu()
 
@@ -339,6 +343,7 @@ Examples:
   {Colors.CYAN}│{Colors.END} {Colors.CYAN}26.{Colors.END} System Core Tweaks  — Classic context menu, visual FX, background apps {Colors.CYAN}│{Colors.END}
   {Colors.CYAN}│{Colors.END} {Colors.CYAN}27.{Colors.END} Handheld/Laptop Power — Hibernate, power button, Core Isolation check {Colors.CYAN}│{Colors.END}
   {Colors.CYAN}│{Colors.END} {Colors.CYAN}28.{Colors.END} Reclaim Space        — Windows.old cleanup, WinSxS component compact  {Colors.CYAN}│{Colors.END}
+  {Colors.CYAN}│{Colors.END} {Colors.CYAN}29.{Colors.END} Advanced Tuning      — Foreground priority, NTFS/NIC overhead tweaks  {Colors.CYAN}│{Colors.END}
   {Colors.CYAN}└─────────────────────────────────────────────────────────────────────────────┘{Colors.END}
 
   {Colors.BOLD}{Colors.GREEN}SYSTEM TOOLS{Colors.END}
@@ -409,6 +414,8 @@ Examples:
                 self._run_module("handheld_tweaks")
             elif choice == "28":
                 self._run_module("reclaim_space")
+            elif choice == "29":
+                self._run_module("advanced_tweaks")
             elif choice == "a":
                 self._elevate_admin()
                 break
@@ -509,6 +516,9 @@ Examples:
             elif module_name == "reclaim_space":
                 from reclaim_space import ReclaimSpace
                 ReclaimSpace().run()
+            elif module_name == "advanced_tweaks":
+                from advanced_tweaks import AdvancedTweaks
+                AdvancedTweaks().run()
         except ImportError as e:
             print_error(f"Failed to load module '{module_name}': {e}")
             print_info(f"Ensure '{module_name}.py' exists in: {MODULES_DIR}")

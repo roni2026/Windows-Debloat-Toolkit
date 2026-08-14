@@ -65,6 +65,91 @@ def _build_tweaks():
         check=lambda: None,  # powercfg query formatting for this one isn't reliably parseable; shown as unknown
     ))
 
+    tweaks.append(Tweak(
+        "hh_wake_timers", "Disable Wake Timers",
+        "Stops scheduled tasks/apps from waking the device from sleep in your pocket or bag.",
+        apply=lambda: run_cmd(
+            "powercfg /setacvalueindex SCHEME_CURRENT SUB_SLEEP RTCWAKE 0 && "
+            "powercfg /setdcvalueindex SCHEME_CURRENT SUB_SLEEP RTCWAKE 0 && "
+            "powercfg /setactive SCHEME_CURRENT"
+        ),
+        revert=lambda: run_cmd(
+            "powercfg /setacvalueindex SCHEME_CURRENT SUB_SLEEP RTCWAKE 1 && "
+            "powercfg /setdcvalueindex SCHEME_CURRENT SUB_SLEEP RTCWAKE 1 && "
+            "powercfg /setactive SCHEME_CURRENT"
+        ),
+        check=lambda: None,
+    ))
+
+    tweaks.append(Tweak(
+        "hh_wifi_power_save", "Disable Wi-Fi Adapter Power Saving",
+        "Stops Windows from power-cycling the Wi-Fi radio to save battery — trades a bit of battery life for fewer random drop-outs/reconnects.",
+        apply=lambda: run_cmd(
+            'for /f "tokens=3" %a in (\'netsh interface show interface ^| findstr /i "Wi-Fi"\') '
+            'do powercfg /setacvalueindex SCHEME_CURRENT SUB_WIRELESS RADIO_POWER 0'
+        ),
+        revert=lambda: run_cmd(
+            "powercfg /setacvalueindex SCHEME_CURRENT SUB_WIRELESS RADIO_POWER 1 && powercfg /setactive SCHEME_CURRENT"
+        ),
+        check=lambda: None,
+    ))
+
+    tweaks.append(Tweak(
+        "hh_touch_keyboard", "Auto-Show Touch Keyboard (No Physical Keyboard)",
+        "Makes the on-screen keyboard pop up automatically on tablet-mode/handheld devices when no physical keyboard is attached.",
+        apply=lambda: reg_write("HKCU\\Software\\Microsoft\\TabletTip\\1.7", "EnableDesktopModeAutoInvoke", 1),
+        revert=lambda: reg_write("HKCU\\Software\\Microsoft\\TabletTip\\1.7", "EnableDesktopModeAutoInvoke", 0),
+        check=lambda: reg_matches("HKCU\\Software\\Microsoft\\TabletTip\\1.7", "EnableDesktopModeAutoInvoke", 1),
+        needs_admin=False,
+    ))
+
+    tweaks.append(Tweak(
+        "hh_compact_os", "Enable Compact OS",
+        "Compresses core Windows system files to reclaim disk space — meaningful on handhelds with small (128–256GB) SSDs. One-time operation; 'revert' decompresses back.",
+        apply=lambda: run_cmd("compact /CompactOS:always", timeout=1800),
+        revert=lambda: run_cmd("compact /CompactOS:never", timeout=1800),
+        check=lambda: "already" not in run_cmd("compact /CompactOS:query")[0].lower()
+                      and "enabled" in run_cmd("compact /CompactOS:query")[0].lower(),
+        risk="reboot",
+    ))
+
+    tweaks.append(Tweak(
+        "hh_reduced_hibernate", "Reduce Hibernation File Size",
+        "Shrinks hibernate.sys to the minimum needed for standard hibernate (not the larger size needed for Fast Startup's hybrid mode) — frees disk space on small drives.",
+        apply=lambda: run_cmd("powercfg /hibernate /size 50"),
+        revert=lambda: run_cmd("powercfg /hibernate /size 100"),
+        check=lambda: None,
+    ))
+
+    tweaks.append(Tweak(
+        "hh_cpu_boost_mode", "Enable Aggressive CPU Boost Mode",
+        "Sets the power plan's processor boost mode to Aggressive on both battery and plugged-in profiles, for snappier response on APU-based handhelds.",
+        apply=lambda: run_cmd(
+            "powercfg /setacvalueindex SCHEME_CURRENT SUB_PROCESSOR PERFBOOSTMODE 2 && "
+            "powercfg /setdcvalueindex SCHEME_CURRENT SUB_PROCESSOR PERFBOOSTMODE 1 && "
+            "powercfg /setactive SCHEME_CURRENT"
+        ),
+        revert=lambda: run_cmd(
+            "powercfg /setacvalueindex SCHEME_CURRENT SUB_PROCESSOR PERFBOOSTMODE 0 && "
+            "powercfg /setdcvalueindex SCHEME_CURRENT SUB_PROCESSOR PERFBOOSTMODE 0 && "
+            "powercfg /setactive SCHEME_CURRENT"
+        ),
+        check=lambda: None,
+    ))
+
+    tweaks.append(Tweak(
+        "hh_reserved_storage", "Disable Reserved Storage",
+        "Frees the 7GB+ Windows normally reserves for its own updates/temp files — meaningful headroom on a small handheld SSD, at the cost of updates needing to find space themselves.",
+        apply=lambda: run_cmd(
+            'DISM /Online /Set-ReservedStorageState /State:Disabled'
+        ),
+        revert=lambda: run_cmd(
+            'DISM /Online /Set-ReservedStorageState /State:Enabled'
+        ),
+        check=lambda: "Disabled" in run_cmd('DISM /Online /Get-ReservedStorageState')[0],
+        risk="reboot",
+    ))
+
     return tweaks
 
 
