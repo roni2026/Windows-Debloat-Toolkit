@@ -1,6 +1,6 @@
-# Windows Input Device Troubleshooting Toolkit
+# Windows Toolkit
 
-A command-line toolkit for diagnosing and fixing keyboard, mouse, and general hardware problems on Windows — built for technicians and anyone dealing with flaky input devices, written in pure Python with no external dependencies beyond the standard library.
+A command-line toolkit for diagnosing, fixing, and tuning Windows — hardware troubleshooting on one side, reversible debloat/performance tweaks on the other, written in pure Python with no external dependencies beyond the standard library.
 
 ## Why
 
@@ -23,6 +23,18 @@ Most keyboard/mouse troubleshooting on Windows means digging through Device Mana
 **Advanced diagnostics** — network adapters and connectivity (`network_checker`), startup programs and boot time (`startup_checker`), plain-language decoding of recent event log errors (`eventlog_checker`), and SFC/DISM/Windows Update wrappers (`system_health_checker`).
 
 **Display, power & recovery** — GPU/monitor/driver-crash history (`display_checker`) and battery health with wear percentage (`battery_checker`).
+
+## Tweaks & Debloat
+
+The second half of the toolkit: reversible registry/Group Policy tweaks, each with an Apply, Revert, and live status Check, so you can always see what's actually turned on and undo anything individually. A System Restore checkpoint is created automatically before a batch of tweaks is applied (where System Protection allows it).
+
+- **`debloat_privacy`** — turns off telemetry, Copilot, Recall, Activity History, the advertising ID, Cortana, Start menu ads/suggestions, taskbar Widgets, and Bing-backed search suggestions
+- **`gaming_tweaks`** — Hardware-Accelerated GPU Scheduling, disables Game Bar/Game DVR capture, disables Multiplane Overlay (fixes flicker on some GPU/monitor combos), disables fullscreen optimizations, disables Nagle's Algorithm for lower network latency, and unlocks/activates the Ultimate Performance power plan
+- **`system_tweaks`** — classic Windows 10-style right-click context menu, background app throttling, visual effects set to best performance, disables Search Highlights, shows file extensions, and adds "End Task" to the taskbar right-click menu
+- **`handheld_tweaks`** — enables Hibernate, sets the power button to hibernate instead of Modern Standby (fixes the classic "device wakes up hot in the bag" issue), disables USB selective suspend, and includes a guided (read-only) Core Isolation / Memory Integrity check
+- **`reclaim_space`** — finds and removes `Windows.old` / upgrade-staging leftovers, and can compact the WinSxS component store via `DISM /StartComponentCleanup /ResetBase`
+
+Applied/reverted state is tracked in `logs/tweak_state.json`, and each module can print a live ON/OFF/unknown status for every tweak it manages before you touch anything.
 
 ## Running it
 

@@ -60,6 +60,23 @@ Driver, Reporting & Repair Modules:
                          print spooler reset, Windows Update component
                          reset, Explorer restart, Search reindex, and more
 
+Tweaks & Debloat Modules:
+  • debloat_privacy   — Reversible telemetry/Copilot/Recall/ads/Cortana
+                         tweaks, each with an Apply/Revert/Check status
+  • gaming_tweaks      — HAGS, Game Bar/DVR, MPO, Nagle's Algorithm,
+                          Ultimate Performance power plan
+  • system_tweaks      — Classic right-click menu, visual effects tuning,
+                          background app throttling, search highlights
+  • handheld_tweaks    — Hibernate/power-button behavior, USB selective
+                          suspend, a guided Core Isolation status check
+  • reclaim_space      — Windows.old/upgrade-leftover cleanup and a
+                          WinSxS component store compaction pass
+
+Every tweak module writes only well-documented registry/Group Policy
+values (the same ones exposed via gpedit.msc) and tracks state in
+logs/tweak_state.json so applied tweaks can be reverted individually,
+and creates a System Restore checkpoint before applying where practical.
+
 Usage:
   python kb_toolkit.py              Launch interactive menu
   python kb_toolkit.py --check      Run keyboard check directly
@@ -85,6 +102,11 @@ Usage:
   python kb_toolkit.py --drivercheck   Run driver age scan directly
   python kb_toolkit.py --report        Run one-click diagnostic report directly
   python kb_toolkit.py --repair        Open the reset/repair toolkit directly
+  python kb_toolkit.py --debloat       Open Debloat & Privacy tweaks directly
+  python kb_toolkit.py --gaming        Open Gaming & Performance tweaks directly
+  python kb_toolkit.py --systweaks     Open System Core tweaks directly
+  python kb_toolkit.py --handheld      Open Handheld/Laptop Power tweaks directly
+  python kb_toolkit.py --reclaim       Open Reclaim Space cleanup directly
   python kb_toolkit.py --admin      Restart as Administrator
 
 Author: Input Device Toolkit
@@ -149,6 +171,11 @@ Examples:
         parser.add_argument("--drivercheck", action="store_true", help="Run driver age scan")
         parser.add_argument("--report", action="store_true", help="Run one-click diagnostic report")
         parser.add_argument("--repair", action="store_true", help="Open the reset/repair toolkit")
+        parser.add_argument("--debloat", action="store_true", help="Open Debloat & Privacy tweaks")
+        parser.add_argument("--gaming", action="store_true", help="Open Gaming & Performance tweaks")
+        parser.add_argument("--systweaks", action="store_true", help="Open System Core tweaks")
+        parser.add_argument("--handheld", action="store_true", help="Open Handheld/Laptop Power tweaks")
+        parser.add_argument("--reclaim", action="store_true", help="Open Reclaim Space cleanup")
         parser.add_argument("--admin", action="store_true", help="Restart as Administrator")
         parser.add_argument("--version", action="store_true", help="Show version")
 
@@ -215,6 +242,16 @@ Examples:
             self._run_module("report_generator")
         elif args.repair:
             self._run_module("repair_toolkit")
+        elif args.debloat:
+            self._run_module("debloat_privacy")
+        elif args.gaming:
+            self._run_module("gaming_tweaks")
+        elif args.systweaks:
+            self._run_module("system_tweaks")
+        elif args.handheld:
+            self._run_module("handheld_tweaks")
+        elif args.reclaim:
+            self._run_module("reclaim_space")
         else:
             self._interactive_menu()
 
@@ -295,6 +332,15 @@ Examples:
   {Colors.CYAN}│{Colors.END} {Colors.CYAN}23.{Colors.END} Reset & Repair      — Network/spooler/WU reset, Explorer restart, more{Colors.CYAN}│{Colors.END}
   {Colors.CYAN}└─────────────────────────────────────────────────────────────────────────────┘{Colors.END}
 
+  {Colors.BOLD}{Colors.MAGENTA}TWEAKS & DEBLOAT{Colors.END}
+  {Colors.CYAN}┌─────────────────────────────────────────────────────────────────────────────┐{Colors.END}
+  {Colors.CYAN}│{Colors.END} {Colors.CYAN}24.{Colors.END} Debloat & Privacy   — Telemetry, Copilot/Recall, ads, Cortana (reversible)  {Colors.CYAN}│{Colors.END}
+  {Colors.CYAN}│{Colors.END} {Colors.CYAN}25.{Colors.END} Gaming & Perf Tweaks — HAGS, Game Bar, MPO, Nagle, Ultimate Perf plan  {Colors.CYAN}│{Colors.END}
+  {Colors.CYAN}│{Colors.END} {Colors.CYAN}26.{Colors.END} System Core Tweaks  — Classic context menu, visual FX, background apps {Colors.CYAN}│{Colors.END}
+  {Colors.CYAN}│{Colors.END} {Colors.CYAN}27.{Colors.END} Handheld/Laptop Power — Hibernate, power button, Core Isolation check {Colors.CYAN}│{Colors.END}
+  {Colors.CYAN}│{Colors.END} {Colors.CYAN}28.{Colors.END} Reclaim Space        — Windows.old cleanup, WinSxS component compact  {Colors.CYAN}│{Colors.END}
+  {Colors.CYAN}└─────────────────────────────────────────────────────────────────────────────┘{Colors.END}
+
   {Colors.BOLD}{Colors.GREEN}SYSTEM TOOLS{Colors.END}
   {Colors.CYAN}┌─────────────────────────────────────────────────────────────────────────────┐{Colors.END}
   {Colors.CYAN}│{Colors.END} {Colors.CYAN}A.{Colors.END} Elevate to Admin    — Restart toolkit with Administrator rights      {Colors.CYAN}│{Colors.END}
@@ -353,6 +399,16 @@ Examples:
                 self._run_module("report_generator")
             elif choice == "23":
                 self._run_module("repair_toolkit")
+            elif choice == "24":
+                self._run_module("debloat_privacy")
+            elif choice == "25":
+                self._run_module("gaming_tweaks")
+            elif choice == "26":
+                self._run_module("system_tweaks")
+            elif choice == "27":
+                self._run_module("handheld_tweaks")
+            elif choice == "28":
+                self._run_module("reclaim_space")
             elif choice == "a":
                 self._elevate_admin()
                 break
@@ -438,6 +494,21 @@ Examples:
             elif module_name == "repair_toolkit":
                 from repair_toolkit import RepairToolkit
                 RepairToolkit().run()
+            elif module_name == "debloat_privacy":
+                from debloat_privacy import DebloatPrivacy
+                DebloatPrivacy().run()
+            elif module_name == "gaming_tweaks":
+                from gaming_tweaks import GamingTweaks
+                GamingTweaks().run()
+            elif module_name == "system_tweaks":
+                from system_tweaks import SystemTweaks
+                SystemTweaks().run()
+            elif module_name == "handheld_tweaks":
+                from handheld_tweaks import HandheldTweaks
+                HandheldTweaks().run()
+            elif module_name == "reclaim_space":
+                from reclaim_space import ReclaimSpace
+                ReclaimSpace().run()
         except ImportError as e:
             print_error(f"Failed to load module '{module_name}': {e}")
             print_info(f"Ensure '{module_name}.py' exists in: {MODULES_DIR}")
