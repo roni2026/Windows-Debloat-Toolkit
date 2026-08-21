@@ -9,9 +9,9 @@
     before any modification, allowing rollback via the SnapshotTool.
 
 .NOTES
-    Version  : 7.3.1
-    Author   : KeiRetroGaming
-    Project  : https://github.com/keiretrogaming/Project-VampKit
+    Version  : 9.0
+    Author   : BigBrain
+    Project  : https://github.com/roni2026/Windows-Debloat-Toolkit
     License  : MIT (Open Source)
     Requires : Windows 11 (24H2 or 25H2), PowerShell 5.1+, Administrator rights
 
