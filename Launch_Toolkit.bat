@@ -2,6 +2,8 @@
 chcp 65001 >nul
 title Windows Toolkit - Unified Launcher
 
+:START
+cls
 echo.
 echo  ============================================================
 echo    WINDOWS TOOLKIT  ^|  Unified Debloat ^& Troubleshooting
@@ -27,22 +29,18 @@ goto :START
 
 :GUI
 echo.
-echo  Requesting Administrator privileges for GUI mode...
 net session >nul 2>&1
 if %errorLevel% == 0 (
     goto :RunGUI
 ) else (
+    echo  Requesting Administrator privileges...
     powershell -Command "Start-Process cmd -ArgumentList '/c \"%~dpnx0\"' -Verb RunAs"
     exit
 )
 
 :RunGUI
-echo  Launching Ronin GUI...
-if not exist "%~dp0src\Ronin.ps1" (
-    echo  Ronin source not found. Running setup to download from GitHub...
-    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0Get-RoninSource.ps1"
-)
 if exist "%~dp0Ronin.ps1" (
+    echo  Launching Ronin GUI...
     powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0Ronin.ps1"
 ) else (
     echo  Building Ronin from source...
