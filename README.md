@@ -2,7 +2,7 @@
 
 One repository. Two tools. Everything you need to clean up, optimize, and diagnose Windows.
 
-- **GUI Mode (Project Ronin)** — Cyberpunk-styled WPF interface for debloating, privacy tweaks, gaming optimization, and system maintenance. Every change is reversible.
+- **GUI Mode (VampKit)** — Cyberpunk-styled WPF interface for debloating, privacy tweaks, gaming optimization, and system maintenance. Every change is reversible.
 - **CLI Mode (Hardware Diagnostics)** — Python command-line suite for deep hardware troubleshooting: keyboard, mouse, storage, RAM, audio, network, display, battery, drivers, and more.
 
 ---
@@ -17,14 +17,14 @@ One repository. Two tools. Everything you need to clean up, optimize, and diagno
 ```
 
 Or launch directly:
-- `Launch_Ronin.bat` — GUI mode (auto-elevates to Administrator)
+- `Launch_VampKit.bat` — GUI mode (auto-elevates to Administrator)
 - `launch.bat` — CLI mode
 
 ---
 
-## GUI Mode — Debloat & Optimization (Project Ronin)
+## GUI Mode — Debloat & Optimization (VampKit)
 
-Run `Launch_Ronin.bat` as Administrator. On first launch it compiles `Ronin.ps1` from the included source files in `src/` and `ui/` — no internet required.
+Run `Launch_VampKit.bat` as Administrator. On first launch it compiles `VampKit.ps1` from the included source files in `src/` and `ui/` — no internet required.
 
 | Tab | What it does |
 |-----|--------------|
@@ -97,18 +97,18 @@ Requires Python 3.7+. Run `launch.bat` or `python kb_toolkit.py`.
 ```
 Windows-Debloat-Toolkit/
 ├── Launch_Toolkit.bat        ← Master launcher
-├── Launch_Ronin.bat          ← GUI direct launcher
+├── Launch_VampKit.bat        ← GUI direct launcher
 ├── launch.bat                ← CLI direct launcher
-├── BuildRonin.ps1            ← Compiles Ronin.ps1 from src/ + ui/
+├── BuildVampKit.ps1          ← Compiles VampKit.ps1 from src/ + ui/
 ├── kb_toolkit.py             ← CLI entry point
 ├── modules/                  ← 29 Python diagnostic/tweak modules
 ├── src/
-│   ├── Ronin.ps1             ← GUI controller
-│   ├── RoninCore.ps1         ← Engine, registry helpers, job dispatcher
-│   ├── RoninDB.ps1           ← Tweak database (Apply/Revert/Check)
-│   └── RoninSnapshotTool.ps1 ← Registry snapshot recovery
+│   ├── VampKit.ps1           ← GUI controller
+│   ├── VampKitCore.ps1       ← Engine, registry helpers, job dispatcher
+│   ├── VampKitDB.ps1         ← Tweak database (Apply/Revert/Check)
+│   └── VampKitSnapshotTool.ps1 ← Registry snapshot recovery
 └── ui/
-    └── Ronin.xaml            ← WPF UI
+    └── VampKit.xaml          ← WPF UI
 ```
 
 ---
