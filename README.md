@@ -1,52 +1,141 @@
-# Windows Toolkit
+# Windows Toolkit — Unified Debloat & Troubleshooting Suite
 
-A command-line toolkit for diagnosing, fixing, and tuning Windows — hardware troubleshooting on one side, reversible debloat/performance tweaks on the other, written in pure Python with no external dependencies beyond the standard library.
+A combined toolkit that brings two tools into one repository:
 
-## Why
+- **GUI Mode (Project Ronin)** — A cyberpunk-styled WPF interface for debloating, privacy tweaks, gaming optimization, and system maintenance. Every change is reversible via registry snapshots.
+- **CLI Mode (Hardware Diagnostics)** — A Python-based command-line suite for deep hardware troubleshooting: keyboard, mouse, storage, RAM, audio, network, display, battery, drivers, and more.
 
-Most keyboard/mouse troubleshooting on Windows means digging through Device Manager, obscure registry keys, and driver versions by hand. This toolkit wraps all of that into a single menu-driven tool: run a module, get a plain-language diagnosis, fix what can be fixed automatically.
+---
 
-## What's included
+## Quick Start
 
-**Keyboard** — hardware/driver diagnostics (`kb_checker`), live key press monitoring with stuck-key detection (`kb_monitor`), and scancode remapping / key disabling / stuck-key repair (`kb_remapper`).
+**Double-click `Launch_Toolkit.bat`** — it asks which mode you want:
 
-**Mouse & trackpad** — device diagnostics including precision touchpad detection (`mouse_checker`), real-time cursor/button/velocity tracking (`mouse_monitor`), and pointer speed/gesture/palm-rejection configuration (`mouse_remapper`).
+```
+[1] GUI Mode      - Debloat, Optimization & Maintenance (Project Ronin)
+[2] CLI Mode      - Full Hardware Diagnostics (Python toolkit)
+```
 
-**Storage & memory** — SMART-based disk health via `smartctl` (`storage_checker`) and installed RAM/speed/load reporting (`ram_checker`).
+Or use the dedicated launchers:
+- `Launch_Ronin.bat` — opens the GUI directly (auto-elevates to admin)
+- `launch.bat` — opens the CLI diagnostic toolkit directly
 
-**Printers & scanners** — installed devices, spooler status, and driver checks (`printer_checker`, `scanner_checker`).
+---
 
-**Audio & general hardware** — audio devices and services (`audio_checker`), plus a broad sweep covering WiFi, Bluetooth, thermals, ports, battery, webcam and anything else reporting a device error (`hardware_checker`).
+## GUI Mode — Project Ronin (Debloat & Optimization)
 
-**System maintenance** — temp/cache cleanup, Recycle Bin, DNS flush, with a live progress UI (`optimizer`).
+A graphical Windows 11 optimization suite. Run `Launch_Ronin.bat` as Administrator.
 
-**Advanced diagnostics** — network adapters and connectivity (`network_checker`), startup programs and boot time (`startup_checker`), plain-language decoding of recent event log errors (`eventlog_checker`), and SFC/DISM/Windows Update wrappers (`system_health_checker`).
+> **First run:** The launcher auto-downloads the Ronin source files from GitHub and builds
+> the self-contained `Ronin.ps1` monolith. You can also run manually:
+> - `Get-RoninSource.ps1` — downloads src/ and ui/ from Project Ronin
+> - `BuildRonin.ps1` — compiles the standalone monolith from those files
 
-**Display, power & recovery** — GPU/monitor/driver-crash history (`display_checker`) and battery health with wear percentage (`battery_checker`).
+### Modules
 
-## Tweaks & Debloat
+| Tab | Purpose |
+|-----|---------|
+| **Auto-Optimize** | Safe high-impact defaults for any new install |
+| **System Core** | Explorer tweaks, Start Menu cleanup, Fast Startup, visual effects |
+| **Gaming & GPU** | HAGS, Game Bar/DVR, MPO, Nagle's Algorithm, VRR, Ultimate Performance plan |
+| **Handheld** | Hot-Bag fix, BitLocker/encryption, Core Isolation, EPP power slicing |
+| **Privacy Shield** | Telemetry, Copilot, Recall AI, advertising ID, Cortana, location, OneDrive |
+| **Advanced** | WSL, Hyper-V, NTFS/NIC overhead, foreground priority boost |
+| **Maintenance** | SFC/DISM, WU reset, GPU cache clear, SSD trim, temp cleanup, driver audit |
 
-The second half of the toolkit: 82 reversible registry/Group Policy/powercfg tweaks across five modules, each with an Apply, Revert, and live status Check, so you can always see what's actually turned on and undo anything individually. A System Restore checkpoint is created automatically before a batch of tweaks is applied (where System Protection allows it).
+### Safety Features
+- Registry snapshot before every change — restore any value via `src/RoninSnapshotTool.ps1`
+- System Restore checkpoint before batch operations
+- BitLocker live-decryption banner (warns before reboot mid-decrypt)
+- Expert Mode gate on destructive operations
+- Hardware-aware: disables GPU tweaks that don't apply to your installed GPU
 
-- **`debloat_privacy`** (25 tweaks) — telemetry, Copilot, Recall, Activity History, advertising ID, Cortana, Start menu ads, taskbar Widgets, Delivery Optimization P2P updates, location tracking, OneDrive auto-start, consumer features, error reporting, Shared Experiences, Edge first-run/ads, telemetry scheduled tasks, feedback prompts, program inventory, cloud clipboard, map downloads, app-launch tracking, typing insights, tailored experiences, and more
-- **`gaming_tweaks`** (17 tweaks) — Hardware-Accelerated GPU Scheduling, Game Bar/DVR, Multiplane Overlay, fullscreen optimizations, Nagle's Algorithm, Ultimate Performance power plan, VRR, Game Mode, Xbox background services, power/network throttling, mouse acceleration, system responsiveness, NTFS cache size, PCIe ASPM, GPU crash-recovery timeout, and GPU task priority
-- **`system_tweaks`** (26 tweaks) — classic right-click context menu, background app throttling, visual effects, transparency, dark theme, Fast Startup, taskbar alignment/grouping, Explorer defaults, hidden files, clock seconds, lock screen, search indexing, Remote Assistance, adaptive brightness, menu delay, shortcut arrows, detailed BSOD info, Aero Shake, Explorer sidebar cleanup, setup nag notifications, and snap layout flyout
-- **`handheld_tweaks`** (10 tweaks) — Hibernate enable, power button → hibernate (fixes the "wakes up hot in the bag" issue), USB selective suspend, wake timers, Wi-Fi power saving, touch keyboard auto-show, Compact OS, reduced hibernation file size, aggressive CPU boost mode, reserved storage, plus a guided (read-only) Core Isolation / Memory Integrity check
-- **`advanced_tweaks`** (4 tweaks) — foreground app priority boost, NTFS last-access timestamp, network adapter power saving, and system-wide reserved storage
-- **`reclaim_space`** — finds and removes `Windows.old` / upgrade-staging leftovers, and can compact the WinSxS component store via `DISM /StartComponentCleanup /ResetBase`
+---
 
-Applied/reverted state is tracked in `logs/tweak_state.json`, and each module can print a live ON/OFF/unknown status for every tweak it manages before you touch anything. A few categories of tweak are deliberately left out — OEM vendor-software integrations (Armoury Crate/Legion Space/MSI Center-style hooks) and anything touching BitLocker/disk encryption — since those either need software this toolkit can't verify is installed, or carry real data-loss/lockout risk that isn't appropriate for an unattended toggle.
+## CLI Mode — Hardware Diagnostics Toolkit
 
-## Running it
+A Python command-line toolkit for diagnosing and fixing hardware issues. Requires Python 3.7+.
 
 ```bash
 python kb_toolkit.py
+# or double-click launch.bat
 ```
 
-or on Windows, just double-click `launch.bat`.
+### Modules
 
-Requires Python 3.7+. Everything runs on the standard library and Windows APIs — the one optional piece is [smartmontools](https://www.smartmontools.org/wiki/Download) for `storage_checker`'s SMART health data. Without it, disk enumeration still works, just without the SMART attributes. Several modules need admin rights (remapping, some registry reads) — the toolkit checks for this and tells you when it's needed.
+**Input Devices**
+- `kb_checker` — Keyboard driver status, connectivity, power management
+- `kb_monitor` — Real-time key press monitoring, stuck-key detection
+- `kb_remapper` — Scancode remapping, key disabling, stuck-key repair
+- `mouse_checker` — PTP detection, drivers, connectivity, battery
+- `mouse_monitor` — Cursor tracking, velocity, jitter detection
+- `mouse_remapper` — Pointer speed, gestures, palm rejection
 
-## Structure
+**Hardware**
+- `storage_checker` — SMART-based disk health (requires smartmontools)
+- `ram_checker` — Memory modules, capacity, speed, load
+- `audio_checker` — Speakers, headphones, mics, audio services
+- `hardware_checker` — WiFi, Bluetooth, thermals, ports, NFC, webcam, full device scan
+- `display_checker` — GPUs, monitors, resolution, TDR crash history
+- `battery_checker` — Charge status, wear percentage via powercfg
 
-Each module lives under `modules/` and follows the same pattern — a `run()` entry point, shared UI helpers and Windows API wrappers pulled from `modules/kb_utils.py`. `kb_toolkit.py` is just the menu that ties them together.
+**Diagnostics**
+- `network_checker` — Adapters, gateway ping, DNS, traceroute
+- `startup_checker` — Startup programs, logon tasks, boot time, top processes
+- `eventlog_checker` — Decodes recent Critical/Error events into plain language
+- `system_health_checker` — SFC/DISM wrappers, Windows Update status, pending reboot
+- `driver_checker` — Flags stale drivers by install date
+- `report_generator` — Runs all read-only checkers, exports combined HTML + text report
+
+**Repair & Cleanup**
+- `repair_toolkit` — Network/Winsock reset, print spooler reset, WU component reset, Explorer restart
+- `optimizer` — Temp/Prefetch/thumbnail/WU-cache cleanup, Recycle Bin, DNS flush
+
+**Tweaks & Debloat** *(82 reversible tweaks, each with Apply/Revert/Check)*
+- `debloat_privacy` — Telemetry, Copilot, Recall, ads, Cortana, location, OneDrive (25 tweaks)
+- `gaming_tweaks` — HAGS, Game Bar/DVR, MPO, Nagle, Ultimate Perf plan, VRR, Game Mode (17 tweaks)
+- `system_tweaks` — Classic context menu, visual FX, dark theme, Fast Startup, Explorer (26 tweaks)
+- `handheld_tweaks` — Hibernate, power button, USB suspend, wake timers, Compact OS (10 tweaks)
+- `advanced_tweaks` — Foreground priority, NTFS last-access, NIC power saving (4 tweaks)
+- `reclaim_space` — Windows.old cleanup, WinSxS component store compaction
+
+All tweaks write to registry/Group Policy only. State tracked in `logs/tweak_state.json`. System Restore checkpoint created before batch apply.
+
+---
+
+## Requirements
+
+| Mode | Requirement |
+|------|-------------|
+| GUI | Windows 11 (24H2+), PowerShell 5.1+, Administrator, internet (first run only) |
+| CLI | Windows 10/11, Python 3.7+, no extra packages |
+| CLI (SMART) | [smartmontools](https://www.smartmontools.org/) for full disk health data |
+
+---
+
+## Repository Structure
+
+```
+Windows-Debloat-Toolkit/
+├── Launch_Toolkit.bat        <- Master launcher (choose GUI or CLI)
+├── Launch_Ronin.bat          <- GUI mode direct launcher
+├── launch.bat                <- CLI mode direct launcher
+├── Get-RoninSource.ps1       <- Downloads Ronin src/ + ui/ from GitHub
+├── BuildRonin.ps1            <- Compiles standalone Ronin.ps1 monolith
+├── kb_toolkit.py             <- CLI toolkit entry point
+├── requirements.txt          <- Python optional dependencies
+├── modules/                  <- Python diagnostic/tweak modules (29 modules)
+├── src/                      <- Project Ronin PowerShell source (after Get-RoninSource)
+│   ├── Ronin.ps1             <- UI controller
+│   ├── RoninCore.ps1         <- Core engine, registry helpers, job dispatcher
+│   ├── RoninDB.ps1           <- Tweak database (all Apply/Revert/Check logic)
+│   └── RoninSnapshotTool.ps1 <- Standalone registry snapshot recovery
+└── ui/
+    └── Ronin.xaml            <- WPF UI definition
+```
+
+---
+
+## Disclaimer
+
+Open-source, MIT licensed. System-level changes carry some risk — keep backups of anything you cannot afford to lose. Every tweak uses officially documented registry and Group Policy values and can be individually reversed.
